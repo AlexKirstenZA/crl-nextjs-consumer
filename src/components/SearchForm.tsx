@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, ReactNode } from "react";
-import { JsonApiResource } from "next-drupal";
 
-import { queryDictionaryEntries } from "@/lib/api/drupal";
+import { queryDictionaryEntries, NodeDictionaryEntry } from "@/lib/api/drupal";
 
 export interface SearchFormProps {
   heading?: string;
@@ -29,7 +28,7 @@ const SearchForm = ({
     setIsLoading(true);
     setError(null);
 
-    let results: JsonApiResource[] | undefined;
+    let results: NodeDictionaryEntry[] | undefined;
 
     try {
       results = await queryDictionaryEntries(inputValue.trim());
@@ -37,11 +36,13 @@ const SearchForm = ({
       setError('An error occurred, please try again later');
     }
 
+    setIsLoading(false);
+
     if (results && results.length === 0) {
       setError('No dictionary entries found. Please try another word.');
-    }
+    } else {
 
-    setIsLoading(false);
+    }
 
     console.log(results);
   };
@@ -57,9 +58,9 @@ const SearchForm = ({
   };
 
   return (
-    <div className="relative px-12 py-8 border rounded-xl border-solid border-tertiary">
+    <div className="relative px-12 py-8 font-sans border rounded-xl border-solid border-tertiary">
       {heading &&
-        <h1 className="font-sans text-4xl md:text-5xl font-bold">{heading}</h1>
+        <h1 className="text-4xl md:text-5xl font-bold">{heading}</h1>
       }
       <div className="mt-2">
         {children}

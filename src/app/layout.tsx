@@ -24,7 +24,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased`}
       >
-        {children}
+        <div className="mx-auto min-h-screen max-w-screen-md">
+          {children}
+        </div>
       </body>
     </html>
   );
