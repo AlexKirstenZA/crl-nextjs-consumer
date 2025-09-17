@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, ReactNode } from "react";
+import { useRouter } from 'next/navigation'
 
 import { queryDictionaryEntries, NodeDictionaryEntry } from "@/lib/api/drupal";
 
@@ -18,6 +19,7 @@ const SearchForm = ({
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>();
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -41,10 +43,8 @@ const SearchForm = ({
     if (results && results.length === 0) {
       setError('No dictionary entries found. Please try another word.');
     } else {
-
+      router.push(`/${inputValue.trim()}`)
     }
-
-    console.log(results);
   };
 
   const handleButtonClick = async () => {
