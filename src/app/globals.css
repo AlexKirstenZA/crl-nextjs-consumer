@@ -4,12 +4,15 @@
   --background: #ffffff;
   --foreground: #171717;
   --tertiary: #CED4DA;
+
+  --error: #961616;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-tertiary: var(--tertiary);
+  --color-error: var(--error);
   --font-sans: var(--font-inter);
 }
 

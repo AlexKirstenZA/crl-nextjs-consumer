@@ -14,6 +14,8 @@ const SearchForm = ({
   children
 }: SearchFormProps) => {
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -21,7 +23,7 @@ const SearchForm = ({
   };
 
   const handleButtonClick = () => {
-    console.log(inputValue);
+    setError('Error occurred please try again later');
   };
 
   return (
@@ -51,6 +53,12 @@ const SearchForm = ({
           {buttonLabel}
         </button>
       </div>
+      {isLoading &&
+        <span className="block mt-4 font-bold">Searching...</span>
+      }
+      {error &&
+        <span className="block mt-4 font-bold text-error">{error}</span>
+      }
     </div>
   );
 };
