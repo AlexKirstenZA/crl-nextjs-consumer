@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, ReactNode } from "react";
+import { JsonApiResource } from "next-drupal";
+
+import { queryDictionaryEntries } from "@/lib/api/drupal";
 
 export interface SearchFormProps {
   heading?: string;
@@ -22,14 +25,41 @@ const SearchForm = ({
     setInputValue(value);
   };
 
-  const handleButtonClick = () => {
-    setError('Error occurred please try again later');
+  const performApiSearch = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    let results: JsonApiResource[] | undefined;
+
+    try {
+      results = await queryDictionaryEntries(inputValue.trim());
+    } catch (error) {
+      setError('An error occurred, please try again later');
+    }
+
+    if (results && results.length === 0) {
+      setError('No dictionary entries found. Please try another word.');
+    }
+
+    setIsLoading(false);
+
+    console.log(results);
+  };
+
+  const handleButtonClick = async () => {
+    await performApiSearch();
+  };
+
+  const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      await handleButtonClick();
+    }
   };
 
   return (
-    <div className="px-12 py-8 border rounded-xl border-solid border-tertiary">
+    <div className="relative px-12 py-8 border rounded-xl border-solid border-tertiary">
       {heading &&
-        <h1 className="font-sans text-4xl md:text-5xl font-bold">Word search</h1>
+        <h1 className="font-sans text-4xl md:text-5xl font-bold">{heading}</h1>
       }
       <div className="mt-2">
         {children}
@@ -43,6 +73,7 @@ const SearchForm = ({
           name="search-term"
           type="text"
           onChange={handleInputChange}
+          onKeyDown={(e) => handleKeyPress(e)}
         />
         <button
           aria-label="Perform search"
@@ -53,11 +84,11 @@ const SearchForm = ({
           {buttonLabel}
         </button>
       </div>
-      {isLoading &&
-        <span className="block mt-4 font-bold">Searching...</span>
-      }
       {error &&
         <span className="block mt-4 font-bold text-error">{error}</span>
+      }
+      {isLoading &&
+        <span className="absolute right-2 bottom-2 block mt-4 font-bold">Searching...</span>
       }
     </div>
   );
