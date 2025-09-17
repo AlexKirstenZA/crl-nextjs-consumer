@@ -42,7 +42,7 @@ const config: Config = {
       statements: 80,
     },
   },
-  verbose: true,
+  verbose: false,
 };
 
 export default config;
