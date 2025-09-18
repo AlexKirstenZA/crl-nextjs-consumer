@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 import SearchForm from './SearchForm'
 
@@ -10,6 +10,12 @@ jest.mock('next/navigation', () => ({
 }))
 
 describe('SearchForm', () => {
+
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
   it('renders a heading', () => {
     render(
       <SearchForm heading="Test heading" buttonLabel="Search">
@@ -51,5 +57,23 @@ describe('SearchForm', () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('aria-label', 'Perform search');
     expect(button).toHaveAttribute('disabled');
+  })
+
+  it('enables button when user starts typing within input', () => {
+    render(
+      <SearchForm heading="Test heading" buttonLabel="Search">
+        <p>Test children content</p>
+      </SearchForm>
+    );
+
+    const input = screen.getByRole('textbox');
+    const button = screen.getByRole('button');
+
+    expect(button).toHaveAttribute('disabled');
+
+    fireEvent.change(input, { target: { value: 'test' } });
+
+    expect(button).not.toHaveAttribute('disabled');
+    expect(input).toHaveValue('test');
   })
 })
