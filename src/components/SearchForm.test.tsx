@@ -1,12 +1,17 @@
 import '@testing-library/jest-dom'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 
 import SearchForm from './SearchForm'
+import { getDictionaryEntries } from '@/lib/api/drupal'
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn()
   }),
+}))
+
+jest.mock('@/lib/api/drupal', () => ({
+  getDictionaryEntries: jest.fn()
 }))
 
 describe('SearchForm', () => {
@@ -75,5 +80,28 @@ describe('SearchForm', () => {
 
     expect(button).not.toHaveAttribute('disabled');
     expect(input).toHaveValue('test');
+  })
+
+  it('displays error message when no dictionary entries are found', async () => {
+    const mockGetDictionaryEntries = getDictionaryEntries as jest.MockedFunction<typeof getDictionaryEntries>
+    mockGetDictionaryEntries.mockResolvedValue([]);
+
+    render(
+      <SearchForm heading="Test heading" buttonLabel="Search">
+        <p>Test children content</p>
+      </SearchForm>
+    );
+
+    const input = screen.getByRole('textbox');
+    const button = screen.getByRole('button');
+
+    fireEvent.change(input, { target: { value: 'test' } });
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(screen.getByText('No dictionary entries found. Please try another word.')).toBeInTheDocument();
+    });
+
+    expect(mockGetDictionaryEntries).toHaveBeenCalledWith('test');
   })
 })
