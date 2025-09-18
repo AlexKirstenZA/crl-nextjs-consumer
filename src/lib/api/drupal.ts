@@ -5,7 +5,7 @@ export interface NodeDictionaryEntry extends DrupalNode {
   field_definitions: string[];
 }
 
-export const queryDictionaryEntries = async (
+export const getDictionaryEntries = async (
   searchParam: string
 ): Promise<NodeDictionaryEntry[]> => {
   const drupal = new NextDrupal('http://crl-drupal-json-api.ddev.site');

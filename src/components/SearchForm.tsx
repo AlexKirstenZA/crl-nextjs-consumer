@@ -3,7 +3,7 @@
 import { useState, ReactNode } from "react";
 import { useRouter } from 'next/navigation'
 
-import { queryDictionaryEntries, NodeDictionaryEntry } from "@/lib/api/drupal";
+import { getDictionaryEntries, NodeDictionaryEntry } from "@/lib/api/drupal";
 
 export interface SearchFormProps {
   heading?: string;
@@ -33,7 +33,7 @@ const SearchForm = ({
     let results: NodeDictionaryEntry[] | undefined;
 
     try {
-      results = await queryDictionaryEntries(inputValue.trim());
+      results = await getDictionaryEntries(inputValue.trim());
     } catch (error) {
       setError('An error occurred, please try again later');
     }
@@ -53,7 +53,7 @@ const SearchForm = ({
 
   const handleKeyPress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim()) {
-      await handleButtonClick();
+      await performApiSearch();
     }
   };
 

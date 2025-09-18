@@ -1,4 +1,4 @@
-import { queryDictionaryEntries, NodeDictionaryEntry } from "@/lib/api/drupal";
+import { getDictionaryEntries, NodeDictionaryEntry } from "@/lib/api/drupal";
 
 interface WordInfoProps {
   params: {
@@ -20,7 +20,7 @@ export default async function WordInfo({
   let apiError = false;
 
   try {
-    results = await queryDictionaryEntries(word);
+    results = await getDictionaryEntries(word);
   } catch (error) {
     apiError = true;
   }
